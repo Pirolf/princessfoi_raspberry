@@ -1,0 +1,5 @@
+read inputs (thermal, distance) -> is cat? -> too far? -> follow
+                                                       -> stay still
+                                           -> obstacle close? -> obstacle avoidance
+                                                              -> back
+                                           -> search (spin)
