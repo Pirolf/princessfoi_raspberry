@@ -1,5 +1,6 @@
 from a_star import AStar
 from time import sleep
+from state_name import StateName
 import math
 
 # robot wheel to center = 69 mm
@@ -8,6 +9,7 @@ WHEEL_RADIUS = 35
 WHEEL_TO_MOTOR = 120
 
 # encoder indices
+STATIONARY = -1
 LEFT_FORWARD = 0
 LEFT_BACKWARD = 1
 RIGHT_FORWARD = 2
@@ -19,12 +21,47 @@ BACKWARD = 1
 SPEED = 50
 ENCODER_INTERVAL = 0.05
 
+
 class RobotController:
     def __init__(self):
         self.a_star = AStar()
+        self.reset_encoder_states()
+
+    def transition(self, prev_state, state):
+        if state == StateName.CHASE:
+            print("CHASE")
+            self.a_star.motors(SPEED, SPEED)
+        elif state == StateName.SEARCH:
+            print("SEARCH: start rotating")
+            self.a_star.motors(SPEED, -SPEED)
+
+        return
+
+    def reset_encoder_states(self):
+        self.encoders = (0, 0, 0, 0)
+        self.threshold = float('inf')
+        self.encoder_index = STATIONARY
+        a_star.reset_encoders(True)
+
+    def update(self):
+        self.encoders = a_star.read_encoders()
+        if self.encoders[encoder_index] >= threshold:
+            print("stopping motors at threshold = {}".format(threshold))
+            self.reset_encoder_states()
+            return True
+        return False
 
     def turn_right(self, degrees=90, stop=True):
-        self._turn(degrees, stop, 'right')
+        self.threshold = _motor_rotations(degrees)
+        self.encoder_index = LEFT_FORWARD
+        a_star.reset_encoders(False)
+        a_star.motors(SPEED, -SPEED)
+
+    def turn_left(self, degrees=90, stop=True):
+        self.threshold = _motor_rotations(degrees)
+        self.encoder_index = LEFT_FORWARD
+        a_star.reset_encoders(False)
+        a_star.motors(SPEED, -SPEED)
 
     def turn_left(self, degrees=90, stop=True):
         self._turn(degrees, stop, 'left')
