@@ -3,6 +3,7 @@ from state_name import StateName
 from thermal_sensor import ThermalSensor
 from robot_controller import RobotController 
 from graceful_killer import GracefulKiller
+from argparse import ArgumentParser
 from time import sleep
 
 thermal = ThermalSensor()
@@ -15,6 +16,10 @@ state.p()
 
 state.set_var("a", 1)
 state.p()
+
+parser = ArgumentParser()
+parser.add_argument("--debug", help="Use debug mode")
+args = parser.parse_args()
 
 # loop
 
@@ -31,6 +36,8 @@ while True:
 
     # read sensors
     pixels = thermal.read()
+    if args.debug:
+        thermal.pretty_print(pixels)
 
     # if thermal sensor has cat
     cat_detected = is_cat(pixels)
