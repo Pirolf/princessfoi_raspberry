@@ -1,31 +1,43 @@
 from state import State
 from state_name import StateName
 from thermal_sensor import ThermalSensor
+from robot_controller import RobotController 
+from graceful_killer import GracefulKiller
 from time import sleep
-import numpy as np
 
-state = State(StateName.SEARCH, {"a": 0})
+thermal = ThermalSensor()
+controller = RobotController()
+
+state = State(StateName.SEARCH, controller, {"a": 0})
+killer = GracefulKiller(state)
+
 state.p()
 
 state.set_var("a", 1)
 state.p()
 
-thermal = ThermalSensor()
 # loop
 
 
 def is_cat(pixels):
     # TODO: fill this
-    return np.any(pixels) > 23
+    return max(pixels) - min(pixels) >= 2.5 and max(pixels) >= 25
 
 
 while True:
+    if killer.kill_now:
+        print("killing robot")
+        break
+
     # read sensors
     pixels = thermal.read()
 
     # if thermal sensor has cat
-    if is_cat(pixels):
+    cat_detected = is_cat(pixels)
+    print("Cat detected = {}".format(cat_detected))
+
+    if cat_detected:
         print("cat found")
-        state.set_name(StateName.CHASE)
+        state.set_state(StateName.CHASE)
 
     sleep(0.01)

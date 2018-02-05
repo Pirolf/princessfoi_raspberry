@@ -34,6 +34,9 @@ class RobotController:
         elif state == StateName.SEARCH:
             print("SEARCH: start rotating")
             self.a_star.motors(SPEED, -SPEED)
+        elif state == StateName.TERMINATE:
+            print("TERMINATE: stop the robot")
+            self.a_star.motors(0, 0)
 
         return
 
@@ -41,7 +44,7 @@ class RobotController:
         self.encoders = (0, 0, 0, 0)
         self.threshold = float('inf')
         self.encoder_index = STATIONARY
-        a_star.reset_encoders(True)
+        self.a_star.reset_encoders(True)
 
     def update(self):
         self.encoders = a_star.read_encoders()
@@ -52,16 +55,16 @@ class RobotController:
         return False
 
     def turn_right(self, degrees=90, stop=True):
-        self.threshold = _motor_rotations(degrees)
+        self.threshold = self._motor_rotations(degrees)
         self.encoder_index = LEFT_FORWARD
-        a_star.reset_encoders(False)
-        a_star.motors(SPEED, -SPEED)
+        self.a_star.reset_encoders(False)
+        self.a_star.motors(SPEED, -SPEED)
 
     def turn_left(self, degrees=90, stop=True):
         self.threshold = _motor_rotations(degrees)
         self.encoder_index = LEFT_FORWARD
-        a_star.reset_encoders(False)
-        a_star.motors(SPEED, -SPEED)
+        self.a_star.reset_encoders(False)
+        self.a_star.motors(SPEED, -SPEED)
 
     def turn_left(self, degrees=90, stop=True):
         self._turn(degrees, stop, 'left')
@@ -75,13 +78,13 @@ class RobotController:
     def _move(self, distance, stop, direction):
         threshold = self._motor_move(distance)
         if direction == FORWARD:
-            a_star.motors(SPEED, SPEED)
+            self.a_star.motors(SPEED, SPEED)
         else:
-            a_star.motors(-SPEED, -SPEED)
+            self.a_star.motors(-SPEED, -SPEED)
 
         self._read_encoder_until(threshold, direction)
         if stop:
-            a_star.motors(0, 0)
+            self.a_star.motors(0, 0)
 
     def _motor_move(self, distance):
         return (distance / (2 * math.pi * WHEEL_RADIUS)) * WHEEL_TO_MOTOR
@@ -91,35 +94,23 @@ class RobotController:
         return wheelRotations * WHEEL_TO_MOTOR
 
     def _read_encoder_until(self, count, index):
-        a_star.reset_encoders(False)
+        self.a_star.reset_encoders(False)
         while True:
             sleep(ENCODER_INTERVAL)
-            reading = a_star.read_encoders(index)
+            reading = self.a_star.read_encoders(index)
             if reading >= count:
                 print("reading = {}, threshold = {}".format(reading, count))
-                a_star.reset_encoders(True)
+                self.a_star.reset_encoders(True)
                 break
 
     def _turn(self, degrees, stop, orientation):
-        threshold = _motor_rotations(degrees)
+        threshold = self._motor_rotations(degrees)
         if orientation == 'left':
-            a_star.motors(-SPEED, SPEED)
-            _read_encoder_until(threshold, RIGHT_FORWARD)
+            self.a_star.motors(-SPEED, SPEED)
+            self._read_encoder_until(threshold, RIGHT_FORWARD)
         else:
-            a_star.motors(SPEED, -SPEED)
-            _read_encoder_until(threshold, LEFT_FORWARD)
+            self.a_star.motors(SPEED, -SPEED)
+            self._read_encoder_until(threshold, LEFT_FORWARD)
 
         if stop:
-            a_star.motors(0, 0)
-
-c = RobotController()
-c.turn_right()
-sleep(2)
-
-c.forward(100)
-sleep(2)
-
-c.backward(100)
-sleep(2)
-
-c.turn_left()
+            self.a_star.motors(0, 0)
