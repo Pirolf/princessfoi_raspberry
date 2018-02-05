@@ -94,7 +94,7 @@ while(1):
   minVal = min(pixels)
   maxVal = max(pixels)
   diff = maxVal - minVal
-  decoratedPixelStrings = map(lambda (i,p): decorate(i,p), enumerate(pixels))
+  decoratedPixelStrings = map(lambda index_pixel: decorate(index_pixel[0], index_pixel[1]), enumerate(pixels))
   print(''.join(decoratedPixelStrings))
   print('Min = {0}'.format(minVal))
   print('Max = {0}'.format(maxVal))
