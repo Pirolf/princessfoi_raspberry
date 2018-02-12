@@ -34,7 +34,8 @@ with Input(keynames='curses') as input_generator:
             elif c == "z":
                 print("Pressed Z: Stop")
                 aStar.motors(0, 0)
-            elif c == '<ESC>':
+            elif c == 'b':
+                print("Pressed B: Break")
                 break
 
         sleep(0.1)
