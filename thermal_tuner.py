@@ -34,5 +34,7 @@ while True:
             elif c == "z":
                 print("Pressed Z: Stop")
                 aStar.motors(0, 0)
+            elif c == '<ESC>':
+                break
 
     sleep(0.1)
