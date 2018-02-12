@@ -1,7 +1,7 @@
 from thermal_sensor import ThermalSensor
 from a_star import AStar
 from time import sleep
-import keyboard as k
+from curtsies import Input
 
 
 def is_cat(pixels):
@@ -17,20 +17,22 @@ while True:
 
     print("Is cat? {}".format(is_cat(pixels)))
 
-    if k.is_pressed("w"):
-        print("Pressed W: Forward")
-        aStar.motors(SPEED, SPEED)
-    elif k.is_pressed("s"):
-        print("Pressed S: Backward")
-        aStar.motors(-SPEED, -SPEED)
-    elif k.is_pressed("q"):
-        print("Pressed Q: Turn Left")
-        aStar.motors(-SPEED, SPEED)
-    elif k.is_pressed("e"):
-        print("Pressed E: Turn Right")
-        aStar.motors(SPEED, -SPEED)
-    elif k.is_pressed("z"):
-        print("Pressed Z: Stop")
-        aStar.motors(0, 0)
+    with Input(keynames='curses') as input_generator:
+        for c in input_generator:
+            if c == 'w':
+                print("Pressed W: Forward")
+                aStar.motors(SPEED, SPEED)
+            elif c == "s":
+                print("Pressed S: Backward")
+                aStar.motors(-SPEED, -SPEED)
+            elif c == "q":
+                print("Pressed Q: Turn Left")
+                aStar.motors(-SPEED, SPEED)
+            elif c == "e":
+                print("Pressed E: Turn Right")
+                aStar.motors(SPEED, -SPEED)
+            elif c == "z":
+                print("Pressed Z: Stop")
+                aStar.motors(0, 0)
 
     sleep(0.1)
