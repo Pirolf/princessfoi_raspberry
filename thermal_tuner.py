@@ -2,10 +2,11 @@ from thermal_sensor import ThermalSensor
 from a_star import AStar
 from time import sleep
 from curtsies import Input
+import numpy as np
 
 
 def is_cat(pixels):
-    return max(pixels) - min(pixels) >= 2.5 and max(pixels) >= 25
+    return max(pixels) - min(pixels) >= 2.5 or np.mean(pixels) >= 23
 
 
 thermal = ThermalSensor()

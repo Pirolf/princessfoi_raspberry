@@ -44,11 +44,15 @@ class ThermalSensor:
       minVal = min(pixels)
       maxVal = max(pixels)
       diff = maxVal - minVal
+      mean = np.mean(pixels)
+      median = np.median(pixels)
       decoratedPixelStrings = map(lambda index_pixel: self._decorate(index_pixel[0], index_pixel[1]), enumerate(pixels))
       print(''.join(decoratedPixelStrings))
       print('Min = {0}'.format(minVal))
       print('Max = {0}'.format(maxVal))
       print('Diff = {0}'.format(diff))
+      print('Avg = {0}'.format(mean))
+      print('Median = {0}'.format(median))
       print('====================')
 
     def _clamp(self, n, minn, maxn):
