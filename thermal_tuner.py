@@ -11,13 +11,13 @@ def is_cat(pixels):
 thermal = ThermalSensor()
 aStar = AStar()
 SPEED = 50
-while True:
-    pixels = thermal.read()
-    thermal.pretty_print(pixels)
 
-    print("Is cat? {}".format(is_cat(pixels)))
+with Input(keynames='curses') as input_generator:
+    while True:
+        pixels = thermal.read()
+        thermal.pretty_print(pixels)
 
-    with Input(keynames='curses') as input_generator:
+        print("Is cat? {}".format(is_cat(pixels)))
         for c in input_generator:
             if c == 'w':
                 print("Pressed W: Forward")
@@ -37,4 +37,4 @@ while True:
             elif c == '<ESC>':
                 break
 
-    sleep(0.1)
+        sleep(0.1)
