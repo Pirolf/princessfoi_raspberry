@@ -13,6 +13,8 @@ thermal = ThermalSensor()
 aStar = AStar()
 SPEED = 50
 
+print("Battery voltage: {}".format(aStar.read_battery_millivolts()))
+
 with Input(keynames='curses') as input_generator:
     while True:
         pixels = thermal.read()
@@ -35,8 +37,6 @@ with Input(keynames='curses') as input_generator:
             elif c == "z":
                 print("Pressed Z: Stop")
                 aStar.motors(0, 0)
-            elif c == 'b':
-                print("Pressed B: Break")
-                break
+            break
 
         sleep(0.1)
