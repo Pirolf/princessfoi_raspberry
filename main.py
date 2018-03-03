@@ -1,9 +1,11 @@
 from state import State
 from state_name import StateName
 from thermal_sensor import ThermalSensor
-from robot_controller import RobotController 
+from robot_controller import RobotController
 from graceful_killer import GracefulKiller
 from argparse import ArgumentParser
+from curtsies import Input
+import numpy as np
 from time import sleep
 
 thermal = ThermalSensor()
@@ -25,26 +27,42 @@ args = parser.parse_args()
 
 
 def is_cat(pixels):
-    # TODO: fill this
-    return max(pixels) - min(pixels) >= 2.5 and max(pixels) >= 25
+    return max(pixels) - min(pixels) >= 2.5 or np.mean(pixels) >= 23
 
 
-while True:
-    if killer.kill_now:
-        print("killing robot")
-        break
+def is_close(input_generator):
+    # Before distance sensor is wired up, take keyboard input
+    for c in input_generator:
+        if c == 'f':
+            print("Pressed F: Pretend to find cat")
+            return True
+        else:
+            return False
+    return False
 
-    # read sensors
-    pixels = thermal.read()
-    if args.debug:
-        thermal.pretty_print(pixels)
 
-    # if thermal sensor has cat
-    cat_detected = is_cat(pixels)
-    print("Cat detected = {}".format(cat_detected))
+with Input(keynames='curses') as input_generator:
+    while True:
+        if killer.kill_now:
+            print("killing robot")
+            break
 
-    if cat_detected:
-        print("cat found")
-        state.set_state(StateName.CHASE)
+        # read sensors
+        pixels = thermal.read()
+        if args.debug:
+            thermal.pretty_print(pixels)
 
-    sleep(0.01)
+        # if thermal sensor has cat
+        cat_detected = is_cat(pixels)
+        print("Cat detected = {}".format(cat_detected))
+
+        if cat_detected:
+            print("cat found")
+            state.set_state(StateName.CHASE)
+
+        if (state.state in [StateName.CHASE, StateName.SEARCH]
+                and is_close(input_generator)):
+            print("close to cat")
+            state.set_state(StateName.FILM)
+
+        sleep(0.01)

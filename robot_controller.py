@@ -33,7 +33,12 @@ class RobotController:
             self.a_star.motors(SPEED, SPEED)
         elif state == StateName.SEARCH:
             print("SEARCH: start rotating")
+            # Record temperature every 5 degrees
+            # After spinning 360 degrees, follow the highest
             self.a_star.motors(SPEED, -SPEED)
+        elif state == StateName.FILM:
+            print("FILM: spying cats")
+            self.a_star.motors(0, 0)
         elif state == StateName.TERMINATE:
             print("TERMINATE: stop the robot")
             self.a_star.motors(0, 0)

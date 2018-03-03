@@ -1,3 +1,4 @@
+# Test script for thermal sensor
 from thermal_sensor import ThermalSensor
 from a_star import AStar
 from time import sleep
