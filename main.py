@@ -11,7 +11,7 @@ from time import sleep
 thermal = ThermalSensor()
 controller = RobotController()
 
-state = State(StateName.SEARCH, controller, {"a": 0})
+state = State(StateName.INIT, controller, {"a": 0})
 killer = GracefulKiller(state)
 
 state.p()
@@ -41,7 +41,15 @@ def is_close(input_generator):
     return False
 
 
+def init():
+    # Thermal sensor first read will not return a full array
+    thermal.read()
+
+
 with Input(keynames='curses') as input_generator:
+    init()
+    state.set_state(StateName.SEARCH)
+
     while True:
         if killer.kill_now:
             print("killing robot")
