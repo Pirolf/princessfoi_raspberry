@@ -49,6 +49,7 @@ print("[INFO] computing object detections...")
 net.setInput(blob)
 detections = net.forward()
 
+print(detections)
 # loop over the detections
 for i in np.arange(0, detections.shape[2]):
     # extract the confidence (i.e., probability) associated with the
@@ -87,6 +88,6 @@ else:
 # Run
 '''
 python3 cv2_test.py \
-   --prototxt MobileNetSSD_deploy.prototxt.txt \
-   --model MobileNetSSD_deploy.caffemodel --image test_images/plush_cat.jpeg
+   --prototxt ../models/MobileNetSSD_deploy.prototxt.txt \
+   --model ../models/MobileNetSSD_deploy.caffemodel --image test_images/plush_cat.jpeg
 '''

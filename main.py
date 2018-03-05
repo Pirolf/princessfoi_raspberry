@@ -7,17 +7,18 @@ from argparse import ArgumentParser
 from curtsies import Input
 import numpy as np
 from time import sleep
+from vision.classify import Classifier
+from picamera import PiCamera
+
 
 thermal = ThermalSensor()
 controller = RobotController()
 
 state = State(StateName.INIT, controller, {"a": 0})
 killer = GracefulKiller(state)
+classifier = Classifier('models/MobileNetSSD_deploy.prototxt.txt',
+                        'models/MobileNetSSD_deploy.caffemodel')
 
-state.p()
-
-state.set_var("a", 1)
-state.p()
 
 parser = ArgumentParser()
 parser.add_argument("--debug", help="Use debug mode")
@@ -41,13 +42,23 @@ def is_close(input_generator):
     return False
 
 
-def init():
+def init(camera):
+    camera.resolution = (960, 720)
+    camera.framerate = 30
+    # warmup time
+    sleep(2)
     # Thermal sensor first read will not return a full array
     thermal.read()
 
 
-with Input(keynames='curses') as input_generator:
-    init()
+def cam_capture(camera):
+    image = np.empty((720 * 960 * 3,), dtype=np.uint8)
+    camera.capture(image, 'bgr')
+    return image.reshape((720, 960, 3))
+
+
+with PiCamera() as camera, Input(keynames='curses') as input_generator:
+    init(camera)
     state.set_state(StateName.SEARCH)
 
     while True:
