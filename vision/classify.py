@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+import time
 
 
 class Classifier:
@@ -11,14 +12,26 @@ class Classifier:
                "sofa", "train", "tvmonitor"]
     '''
 
-    def __init__(self, prototxt, model, min_confidence=0):
+    def __init__(self, prototxt, model, min_confidence=0, debug=False):
         self.min_confidence = min_confidence
+        self.debug = debug
         # load our serialized model from disk
         print("[INFO] loading model...")
         self.net = cv2.dnn.readNetFromCaffe(prototxt, model)
 
     # image: np array (h, w, 3)
     def detect(self, image):
+        detect_start = 0
+        if (self.debug):
+            detect_start = time.perf_counter()
+
+        ret = self._detect(image)
+        if (self.debug):
+            print("Detect taken: {} ms".format(
+                1000*(time.perf_counter() - detect_start)))
+        return ret
+
+    def _detect(self, image):
         # load the input image and construct an input blob for the image
         # by resizing to a fixed 300x300 pixels and then normalizing it
         # (note: normalization is done via the authors of the MobileNet SSD
@@ -44,5 +57,4 @@ class Classifier:
             # index for cat is 8
             if idx == 8:
                 return (confidence > self.min_confidence, confidence)
-
         return (False, 0)

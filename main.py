@@ -11,20 +11,18 @@ from vision.classify import Classifier
 from picamera import PiCamera
 
 
+parser = ArgumentParser()
+parser.add_argument("--debug", help="Use debug mode")
+args = parser.parse_args()
+
 thermal = ThermalSensor()
 controller = RobotController()
 
 state = State(StateName.INIT, controller, {"a": 0})
 killer = GracefulKiller(state)
 classifier = Classifier('models/MobileNetSSD_deploy.prototxt.txt',
-                        'models/MobileNetSSD_deploy.caffemodel')
-
-
-parser = ArgumentParser()
-parser.add_argument("--debug", help="Use debug mode")
-args = parser.parse_args()
-
-# loop
+                        'models/MobileNetSSD_deploy.caffemodel',
+                        debug=args.debug)
 
 
 def is_cat(pixels):
