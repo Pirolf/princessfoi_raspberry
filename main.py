@@ -65,7 +65,7 @@ with PiCamera() as camera, Input(keynames='curses') as input_generator:
         if killer.kill_now:
             print("killing robot")
             break
-
+        '''
         # read sensors
         pixels = thermal.read()
         if args.debug:
@@ -74,9 +74,12 @@ with PiCamera() as camera, Input(keynames='curses') as input_generator:
         # if thermal sensor has cat
         cat_detected = is_cat(pixels)
         print("Cat detected = {}".format(cat_detected))
+        '''
+
+        (cat_detected, confidence) = classifier.detect(cam_capture(camera))
+        print("Cat detected = {}, Confidence = {}".format(cat_detected, confidence))
 
         if cat_detected:
-            print("cat found")
             state.set_state(StateName.CHASE)
 
         if (state.state in [StateName.CHASE, StateName.SEARCH]
