@@ -73,5 +73,5 @@ classifier = SqueezeClassifier('../models/squeezenet_v1.1.prototxt',
                                '../models/squeezenet_v1.1.caffemodel',
                                debug=True)
 
-image = cv2.imread('test_images/fluff_tilt.jpg')
+image = cv2.imread('test_images/fluff_face.jpg')
 classifier.detect(image)

@@ -7,7 +7,8 @@ from argparse import ArgumentParser
 from curtsies import Input
 import numpy as np
 from time import sleep
-from vision.classify import Classifier, SqueezeClassifier
+from vision.classify import Classifier
+from vision.squeeze_classify import SqueezeClassifier
 from picamera import PiCamera
 
 
