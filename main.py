@@ -7,7 +7,7 @@ from argparse import ArgumentParser
 from curtsies import Input
 import numpy as np
 from time import sleep
-from vision.classify import Classifier
+from vision.classify import Classifier, SqueezeClassifier
 from picamera import PiCamera
 
 
@@ -20,10 +20,15 @@ controller = RobotController()
 
 state = State(StateName.INIT, controller, {"a": 0})
 killer = GracefulKiller(state)
+
+classifier = SqueezeClassifier('./models/squeezenet_v1.1.prototxt',
+                               './models/squeezenet_v1.1.caffemodel',
+                               debug=args.debug)
+'''
 classifier = Classifier('models/MobileNetSSD_deploy.prototxt.txt',
                         'models/MobileNetSSD_deploy.caffemodel',
                         debug=args.debug)
-
+'''
 
 def is_cat(pixels):
     return max(pixels) - min(pixels) >= 2.5 or np.mean(pixels) >= 23
