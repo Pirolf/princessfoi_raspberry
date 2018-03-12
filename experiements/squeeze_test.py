@@ -40,11 +40,12 @@ class SqueezeClassifier:
         return ret
 
     def _detect(self, image):
-        # load the input image and construct an input blob for the image
-        # by resizing to a fixed 300x300 pixels and then normalizing it
-        # (note: normalization is done via the authors of the MobileNet SSD
-        # implementation)
-        blob = cv2.dnn.blobFromImage(cv2.resize(image, (300, 300)), 0.007843, (300, 300), 127.5)
+        # The CNN requires fixed spatial dimensions for the input image(s)
+        # so you need to ensure it is resized to 224x224 pixels while
+        # performing mean subtraction (104, 117, 123) to normalize the input
+        # after executing this command the "blob" now has the shape:
+        # (1, 3, 224, 224)
+        blob = cv2.dnn.blobFromImage(image, 1, (224, 224), (104, 117, 123))
 
         # pass the blob through the network and obtain the detections and
         # predictions
